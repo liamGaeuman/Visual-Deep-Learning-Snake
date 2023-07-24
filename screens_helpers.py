@@ -1,5 +1,6 @@
 from widgets import *
 from typing import Callable
+from collections import deque
 
 
 class PickModelScreen:
@@ -17,8 +18,15 @@ class RunModelScreen:
 class TrainingModelScreen:
 
     def __init__(self):
+        self.replay_buffer = deque(maxlen=2000)
         # new instance of an RL session
         # create all the little parts for the NN
+        pass
+
+    def get_move(self):
+        pass
+
+    def update_state(self):
         pass
 
 
@@ -31,12 +39,12 @@ class HomeScreen:
     WIDTH = 150
     HEIGHT = 50
     PLAY_BUTTON_TEXT = "Play"
-    TRAIN_MODEL_TEXT = "Meow Play"
-    RUN_MODEL_TEXT = "Ruff Play"
+    TRAIN_MODEL_TEXT = "Train Model"
+    RUN_MODEL_TEXT = "Run Model"
     BG_COLOR = (255, 255, 255)  # white
     TEXT_COLOR = (0, 0, 0)  # black
-    HOVER_COLOR = (124, 33, 50)  # random
-    CLICK_COLOR = (50, 33, 124)  # random again
+    HOVER_COLOR = (153, 153, 255)  # random
+    CLICK_COLOR = (130, 130, 255)  # random again
 
     def __init__(self, human_button_function: Callable, train_model_function: Callable, run_model_function: Callable):
         self.medium_font = pygame.font.SysFont("ocraii", 20)

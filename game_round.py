@@ -3,7 +3,7 @@ from snake_sprites import *
 
 
 def random_grid_num():
-    num = random.randint(0, 475 / 25)
+    num = random.randint(0, int(475 / 25))
     return num * 25 + 1
 
 
@@ -64,6 +64,41 @@ class GameRound:
         self._move_snake_body()
         # Update snakes previous head location
         self.previous_head_location = (self.snake.rect.x, self.snake.rect.y)
+
+    # Methods for RL
+    def get_rl_info(self) -> tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]:
+        """This method returns a tuple of 16 integers representing the up down left right distances
+        of the head to the food, head to tail, head to wall, and body midpoint to head respectively"""
+        # Distance of head to food
+        u_food = 1
+        d_food = 1
+        l_food = 1
+        r_food = 1
+
+        # Distance of head to tail
+        u_tail = 1
+        d_tail = 1
+        l_tail = 1
+        r_tail = 1
+
+        # Distance of head to wall
+        u_wall = 1
+        d_wall = 1
+        l_wall = 1
+        r_wall = 1
+
+        # Distance of body midpoint to head
+        u_midpoint = 1
+        d_midpoint = 1
+        l_midpoint = 1
+        r_midpoint = 1
+
+        return (u_food, d_food, l_food, r_food, u_tail, d_tail, l_tail, r_tail, u_wall, d_wall, l_wall, r_wall,
+                u_midpoint, d_midpoint, l_midpoint, r_midpoint)
+
+
+
+
 
     # PRIVATE:
     def _undo_direction(self):

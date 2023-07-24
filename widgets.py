@@ -38,6 +38,6 @@ class Button(pygame.sprite.Sprite):
             self.image.fill(self.bg_color)
 
         text_surface = self.font.render(self.text, True, self.text_color)
-        text_rect = text_surface.get_rect(topleft=self.rect.topleft)
+        text_rect = text_surface.get_rect()
 
-        self.image.blit(text_surface, text_rect)
+        self.image.blit(text_surface, (text_rect[0] + 10, text_rect[1] + 13))

@@ -1,6 +1,8 @@
+import random
+
 import pygame
 from game_round import GameRound
-from screens import *
+from screens_helpers import *
 
 
 class GameController:
@@ -21,6 +23,7 @@ class GameController:
         self.run_model_screen = None
         self.training_model_screen = None
         self.home_screen = None
+        self.ai_screen = None
         self.big_font = pygame.font.SysFont("ocraii", 45)
         self.medium_font = pygame.font.SysFont("ocraii", 35)
         self.small_font = pygame.font.SysFont("ocraii", 15)
@@ -107,26 +110,48 @@ class GameController:
                                                   lambda: self._leave_home_screen("train model screen"),
                                                   lambda: self._leave_home_screen("select model screen"))
 
-                self.home_screen.call_button_updates()
                 self._redraw_home_screen()
 
                 if not self.screen_dict["home screen"]:
                     # Exit tasks
                     self.home_screen = None
 
-            #  - - - - - - Logic for training model - - - - - - -
+            #  - - - - - - Logic for training model - - - - - - - - - -  current task boi!  - --  - -- -  -
             elif self.screen_dict["train model screen"]:
                 if self.training_model_screen is None:
                     self.training_model_screen = TrainingModelScreen()
-                    self.window = pygame.display.set_mode((1000, 500))
+                    self.ai_screen = TrainingModelScreen()
                     time_delay = 50
+                    self.window = pygame.display.set_mode((1000, 500))
+                    self.current_game_screen = GameRound()
+
+                if self.current_game_screen.get_loss_status():
+                    self.current_game_screen = GameRound()
+
+                x = random.randint(1, 10)
+                if x > 7:
+                    self.current_game_screen.set_direction(random.randint(1, 4))
+
+                # self.ai_screen.update_state()
+                # self.ai_screen.get_move()
+                # self.current_game_screen.set_direction(random.randint(1, 4))
+
+                # Update current game state
+                self.current_game_screen.update_snake()
+
+                self._redraw_training_screen()
+
+                key = pygame.key.get_pressed()
+                if key[pygame.K_SPACE]:
+                    self.screen_dict["train model screen"] = False
 
                 # Exit tasks
-                self.window = pygame.display.set_mode((500, 500))
-                self.training_model_screen = None
-                time_delay = 100
-                self.screen_dict["train model screen"] = False
-                self.screen_dict["home screen"] = True
+                if not self.screen_dict["train model screen"]:
+                    self.window = pygame.display.set_mode((500, 500))
+                    self.training_model_screen = None
+                    time_delay = 100
+                    self.screen_dict["train model screen"] = False
+                    self.screen_dict["home screen"] = True
 
             # - - - - - - Logic for picking existing model - - - - -
             elif self.screen_dict["select model screen"]:
@@ -155,30 +180,28 @@ class GameController:
         pygame.quit()
 
     # PRIVATE:
+    def _redraw_training_screen(self):
+        self.window.fill(self.BLACK)
+        self._draw_lines(self.GRAY)
+        self.current_game_screen.get_sprites().draw(self.window)
+        pygame.display.update()
+
     def _redraw_game(self):
         self.window.fill(self.BLACK)
-        # Draw vertical lines
-        for x in range(0, 525, 25):
-            pygame.draw.line(self.window, self.GRAY, (x, 0), (x, 500), 1)
-        # Draw horizontal lines
-        for y in range(0, 525, 25):
-            pygame.draw.line(self.window, self.GRAY, (0, y), (500, y), 1)
+        self._draw_lines(self.GRAY)
         self.current_game_screen.get_sprites().draw(self.window)
         pygame.display.update()
 
     def _redraw_home_screen(self):
         self.window.fill(self.PURPLE)
+        self._draw_lines(self.DARK_GRAY)
         self.home_screen.get_sprites().draw(self.window)
+        self.home_screen.call_button_updates()
         pygame.display.update()
 
     def _redraw_loss_screen(self, score: int):
         self.window.fill(self.BLUE)
-        # Draw vertical lines
-        for x in range(0, 525, 25):
-            pygame.draw.line(self.window, self.DARK_GRAY, (x, 0), (x, 500), 1)
-        # Draw horizontal lines
-        for y in range(0, 525, 25):
-            pygame.draw.line(self.window, self.DARK_GRAY, (0, y), (500, y), 1)
+        self._draw_lines(self.DARK_GRAY)
         game_over_str = "Game Over"
         self._draw_text(game_over_str, self.big_font, self.WHITE, 130, 100)
         game_over_str = "Score: " + str(score)
@@ -188,6 +211,13 @@ class GameController:
 
         # self.loss_screen.get_sprites().draw(self.window)
         pygame.display.update()
+
+    def _draw_lines(self, color: tuple[int, int, int]):
+        for x in range(0, 525, 25):
+            pygame.draw.line(self.window, color, (x, 0), (x, 500), 1)
+        # Draw horizontal lines
+        for y in range(0, 525, 25):
+            pygame.draw.line(self.window, color, (0, y), (500, y), 1)
 
     def _draw_text(self, text: str, font, color: tuple[int, int, int], x: int, y: int):
         img = font.render(text, True, color)
