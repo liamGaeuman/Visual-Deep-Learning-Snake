@@ -1,6 +1,5 @@
 import pygame
 
-
 class SnakeHead(pygame.sprite.Sprite):
     def __init__(self, color: tuple[int, int, int]):
         pygame.sprite.Sprite.__init__(self)
@@ -23,6 +22,10 @@ class SnakeBodyPiece(pygame.sprite.Sprite):
 
     def change_color(self, color: tuple[int, int, int]):
         self.image.fill(color)
+
+    def destroy(self):
+        # Remove the sprite from all groups
+        self.kill()
 
 
 class Food(pygame.sprite.Sprite):
